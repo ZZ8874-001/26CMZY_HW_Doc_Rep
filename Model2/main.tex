@@ -1,0 +1,50 @@
+%!TEX program = xelatex
+% 完整编译: xelatex -> biber/bibtex -> xelatex -> xelatex
+\documentclass[lang=cn,a4paper,11pt]{elegantpaper}
+\usepackage{multirow,makecell,booktabs} % 表格美化、跨行
+\usepackage{enumitem} % 列表格式
+\usepackage{hyperref} % 超链接
+\usepackage{geometry} % 页边距
+\usepackage{fancyhdr}
+\geometry{left=2.5cm,right=2.5cm,top=2.5cm,bottom=2.5cm} % 适配考核题排版
+
+\title{2025年XX硬件招新考核题（二）\\铅酸电池充电电路设计}
+\author{哈尔滨工程大学 水声工程学院\\创新实验室 XX}
+\institute{水声工程学院创新实验室}
+\version{} % 隐藏版本信息
+\date{2025年12月} % 考核题发布时间
+
+% 自定义列表：无缩进、紧凑
+\setlist[enumerate]{leftmargin=2em, itemsep=0pt, parsep=0pt}
+\setlist[itemize]{leftmargin=2em, itemsep=0pt, parsep=0pt}
+
+\begin{document}
+\maketitle
+
+\include{chapters/background}
+\include{chapters/task}
+\include{chapters/basic}
+\include{chapters/advanced}
+\include{chapters/evaluation}
+\include{chapters/evaluation}
+\include{chapters/grading}
+
+\section{声明}
+\begin{enumerate}
+    \item 核心成员筛选仅涉及工位分配和后续重点培养，不影响社团后续培训；
+    \item 硬件部本次核心成员招新具体名额视考核情况待定，预计10人左右；
+    \item 本次考核代表现阶段录用，核心成员考核为过程性考核；
+    \item 请参加考核的同学务必重视课下自行的实践环节，随时可来到水声实验楼311进行实验，需提前在群中联系安排时间；
+    \item 验收时间暂定为2025级12月28日下午，请密切关注群内消息；2024级时间暂定；
+    \item 本次筛选仅面向哈尔滨工程大学水声工程学院2024级及2025级学生。对2024级学生要求智育成绩年级排名前50\%且未挂科；
+    \item 25级与24级分开考核，核心成员录取顺序仅依靠实践考核和理论及素养考核总分排序，顺序录取；
+    \item 可借鉴相关资料，但严禁抄袭，一经发现，考核成绩作废；
+    \item 本次考核要求解释权归XX所有。
+\end{enumerate}
+
+\vspace{2em}
+\noindent\textbf{XX} \hfill 2025年12月\\
+\vspace{1em}
+\noindent\textbf{PS：}无意愿参加考核或中途放弃考核退出考核群聊即可，本社团是拓展科创爱好的地方，不参与我们的大学生活也同样精彩，祝大家学业与科创顺利！
+
+\end{document}
