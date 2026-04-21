@@ -18,7 +18,7 @@
   urlcolor=blue
 }
 
-\title{软件设计与编程实践实验报告}
+\title{基于 Web 的交互式信号时域与频域分析工具}
 \author{陶樞臣 2024050524}
 \date{2026年4月21日}
 
@@ -32,7 +32,11 @@
 
 \section{实验目的}
 
-本次实验是《软件设计与编程实践》课程的期中实践环节，旨在通过完整的工具开发过程，完成以下目标：
+本次实验选题与课程要求高度契合，主题为独立设计并实现噪声正弦信号的时域与频域分析系统，完全满足 “主题自拟、独立完成” 的基本要求。在功能实现上，系统完整覆盖课程要求的全部功能模块：首先实现了数据录入与存储功能，支持通过文件导入 CSV 格式的信号数据，并对采样数据进行持久化管理；其次具备完善的数据管理能力，可对采样点数据进行增、删、改、查操作，保障数据的可维护性；核心的数据处理模块实现了信号时域统计、排序及基于 FFT 的频域分析功能，完成了数据的关键计算与分析任务，例如峰值、均值、峰峰值的计算；交互显示方面，程序提供了菜单驱动的文件操作界面，通过可视化图表友好展示时域与频域结果，并实现了参数的格式化输出；此外，系统还加入了初始化参数加载、文件读取错误处理等扩展功能，进一步提升了程序的健壮性与实用性。
+
+在技术实现层面，程序严格遵循课程提出的技术要求：采用模块化设计思想，通过独立函数分别实现数据导入、FFT 计算、绘图显示、参数统计等功能模块，各模块职责清晰、耦合度低；通过结构体组织信号数据与参数信息，实现了数据的高效管理与传递，类似学生数据的组织方式；代码编写规范严谨，结构清晰，关键逻辑处均配有合理注释，可读性与可维护性强；同时程序界面友好、交互引导清晰，对文件读取失败、数据格式错误等异常场景设置了完善的容错处理，整体可操作性与鲁棒性均达到课程要求。
+
+本次实验完成了以下目标：
 
 \begin{enumerate}
   \item 掌握数字信号处理中时域分析与频域分析的基本原理，理解信号从时域到频域转换的内在逻辑。
@@ -119,13 +123,26 @@ x(t) = A \sin(2\pi f_0 t) + n(t).
 
 \subsection{功能模块划分}
 
-根据程序的功能需求与流程设计，整个系统划分为 4 个独立功能模块：
+根据程序的功能需求与流程图设计，将整个系统划分为 4 个独立的功能模块，各模块职责清晰，降低了模块间的耦合度：
+
+1.
 
 \begin{enumerate}
-  \item \textbf{页面初始化与主控制模块}：负责页面加载后的初始化、图表实例创建、事件绑定以及程序状态管理。
-  \item \textbf{CSV 数据导入与预处理模块}：负责读取本地 CSV 文件，解析单列或双列数据，并自动生成或识别时间向量与采样率。
+  \item \textbf{页面初始化与主控制模块}：作为整个程序的控制中枢，负责页面加载完成后的初始化工作，包括图表实例的创建、用户交互事件的绑定，同时维护程序的状态机，响应用户的各类操作，调度其他模块完成对应的处理逻辑。
+  \item \textbf{CSV 数据导入与预处理模块}：负责处理用户的文件导入操作，通过浏览器的 FileReader API 读取本地 CSV 文件，自动解析文件内容，支持单列（仅幅度数据）与双列（时间 $ + $ 幅度数据）两种格式的输入。针对无时间列的输入，自动根据采样率生成时间向量；针对带时间列的输入，自动从时间差中计算实际采样率，保证数据的一致性。
   \item \textbf{信号分析核心模块}：执行去直流、时域特征计算、加窗、补零及 FFT 运算，并生成单边幅度谱。
-  \item \textbf{可视化与交互模块}：负责时域图、频域图以及统计面板的展示与更新，并响应坐标范围、窗函数、采样率等交互操作。
+  支持可选的直流分量移除操作，消除直流偏移对频谱分析的干扰；
+
+  计算时域信号的统计特征，包括峰值、谷值、峰峰值、均值等参数；
+
+  支持用户选择不同的窗函数，对信号进行加窗处理，减少频谱泄漏；
+
+  将信号补零到 2 的整数次幂长度，优化 FFT 算法的执行效率；
+
+  执行快速傅里叶变换（FFT），将时域信号转换到频域，并计算单边幅度谱，方便用户直观查看信号的频率组成。
+
+
+  \item \textbf{可视化与交互模块}：负责将分析结果以可视化的方式呈现给用户，包括更新时域波形图、频域频谱图，以及更新统计参数面板。同时支持用户调整图表的轴范围、类型等交互操作，提升用户的使用体验。
 \end{enumerate}
 
 \subsection{程序操作流程}
@@ -134,7 +151,7 @@ x(t) = A \sin(2\pi f_0 t) + n(t).
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.78\textwidth]{image/FlowChart4-21-3.png}
+  \includegraphics[width=0.9\textwidth]{image/FlowChart4-21-3.png}
   \caption{程序总体操作流程图}
 \end{figure}
 
@@ -168,6 +185,7 @@ END
 该部分代码用于初始化图表并为后续的数据导入与显示提供基础支持。程序首先创建时域图与频域图实例，分别配置横纵坐标、线条样式与提示信息，以便在导入数据后实时更新显示。
 
 \begin{Verbatim}[frame=single,fontsize=\small]
+// 读取CSV文件内容
 function initCharts() {
     if (typeof Chart === "undefined") {
         showStatus("Loading Failed...", true);
@@ -187,9 +205,82 @@ function initCharts() {
                 pointRadius: 0,
                 borderWidth: 1.5
             }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: false,
+            parsing: false,
+            scales: {
+                x: {
+                    type: "linear",
+                    title: {
+                        display: true,
+                        text: "Time (s)"
+                    }
+                },
+                y: {
+                    type: "linear",
+                    title: {
+                        display: true,
+                        text: "Amplitude"
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    mode: "index",
+                    intersect: false
+                }
+            }
         }
     });
-}
+
+    const freqCtx = document.getElementById("freq-domain-chart").getContext("2d");
+    freqDomainChart = new Chart(freqCtx, {
+        type: "line",
+        data: {
+            labels: [],
+            datasets: [{
+                label: "Frequency Domain",
+                data: [],
+                borderColor: "rgb(255, 99, 132)",
+                tension: 0.1,
+                pointRadius: 0,
+                borderWidth: 1.5
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: false,
+            parsing: false,
+            scales: {
+                x: {
+                    type: "linear",
+                    title: {
+                        display: true,
+                        text: "Frequency (Hz)"
+                    }
+                },
+                y: {
+                    type: "linear",
+                    title: {
+                        display: true,
+                        text: "Amplitude"
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    mode: "index",
+                    intersect: false
+                }
+            }
+        }
+    });
+};
+
 \end{Verbatim}
 
 \subsubsection{信号分析核心代码}
@@ -199,30 +290,41 @@ function initCharts() {
 \begin{Verbatim}[frame=single,fontsize=\small]
 function updateAnalysis() {
     if (!originalAmplitude || originalAmplitude.length === 0) return;
-
+  
+    // 复制原始信号
     let signal = [...originalAmplitude];
-
+  
+    // 去直流处理
     if (removeDcEnabled) {
         const mean = signal.reduce((a, b) => a + b, 0) / signal.length;
         signal = signal.map(v => v - mean);
     }
-
+  
+    // 计算时域统计参数
     const peak = Math.max(...signal);
     const valley = Math.min(...signal);
     const peakToPeak = peak - valley;
     const mean = signal.reduce((a, b) => a + b, 0) / signal.length;
     const freqResolution = sampleRate / signal.length;
-
+  
+    // 更新统计面板
     updateStats(peak, valley, peakToPeak, mean, sampleRate, freqResolution);
+  
+    // 更新时域图表
     updateTimeDomainChart(originalTime, signal);
-
+  
+    // 应用窗函数
     const window = getWindowFunction(signal.length);
     signal = signal.map((v, i) => v * window[i]);
-
+  
+    // 补零到2的幂次
     const nextPowerOf2 = 1 << Math.ceil(Math.log2(signal.length));
     const padded = [...signal, ...new Array(nextPowerOf2 - signal.length).fill(0)];
+  
+    // 执行FFT
     const fftResult = fft(padded);
-
+  
+    // 计算单边幅度谱
     const spectrum = [];
     const freqAxis = [];
     for (let i = 0; i < nextPowerOf2 / 2; i++) {
@@ -232,7 +334,8 @@ function updateAnalysis() {
         spectrum.push(amplitude);
         freqAxis.push(i * sampleRate / nextPowerOf2);
     }
-
+  
+    // 更新频域图表
     updateFrequencyDomainChart(freqAxis, spectrum);
 }
 \end{Verbatim}
@@ -261,9 +364,15 @@ function updateAnalysis() {
   \end{tabular}
 \end{table}
 
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\textwidth]{image/tek00031.png}
+  \caption{示波器采样的信号示意(并非实际导出CSV的数据)}
+\end{figure}
+
 \subsection{测试与调试}
 
-在测试过程中，针对程序各个功能模块进行了逐项验证与调试：
+在测试过程中，针对程序各个功能模块进行了逐项验证与调试:
 
 \begin{enumerate}
   \item \textbf{数据导入测试}：导入测试 CSV 文件后，程序成功识别 4096 个采样点，正确解析幅值数据，并依据采样率生成对应时间向量，导入过程稳定。
@@ -283,19 +392,19 @@ function updateAnalysis() {
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.82\textwidth]{image/4-21-1.png}
+  \includegraphics[width=0.9\textwidth]{image/4-21-1.png}
   \caption{程序运行结果总览}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.82\textwidth]{image/4-21-1.jpeg}
+  \includegraphics[width=0.9\textwidth]{image/4-21-1.jpeg}
   \caption{时域与频域分析显示}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.82\textwidth]{image/4-21-2.png}
+  \includegraphics[width=0.9\textwidth]{image/4-21-2.png}
   \caption{交互功能测试结果}
 \end{figure}
 
@@ -344,13 +453,13 @@ function updateAnalysis() {
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.82\textwidth]{image/4-21-3.jpeg}
+  \includegraphics[width=0.9\textwidth]{image/4-21-3.jpeg}
   \caption{方波信号测试结果}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.82\textwidth]{image/4-21-4.jpeg}
+  \includegraphics[width=0.9\textwidth]{image/4-21-4.jpeg}
   \caption{三角波信号测试结果}
 \end{figure}
 
